@@ -1,16 +1,13 @@
 package com.kh.spring.member.controller;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.kh.spring.member.model.service.MemberService;
 import com.kh.spring.member.model.vo.Member;
@@ -38,6 +35,7 @@ public class MemberController {
 	@RequestMapping("login") //클래스 레벨 이후 나머지 값 
 	public String loginView() {
 		return "member/login";
+		
 		
 	}
 	
@@ -140,7 +138,7 @@ public class MemberController {
 		// 충돌 또는 가독성을 생각하여 생략을 할지 말지를 잘 정해야 함.
 	
 		@RequestMapping("loginAction")
-		   public String loginAction(Member member,Model model) {
+		   public String loginAction(Member member,Model model, RedirectAttributes rdAttr ) {
 			
 			// Model : 전달하고자 하는 데이터를 맵형식(K,V) 형태로 담아 전달하는 객체
 			// 기본적으로 scope는 request임.
@@ -148,15 +146,22 @@ public class MemberController {
 			// Controller 클래스명 위에
 			// @SessionAttributes() 어노테이션을 작성해야 함.
 			
-		      System.out.println(member.getMemberId() + " / " + member.getMemberPwd());
-
+		     // System.out.println(member.getMemberId() + " / " + member.getMemberPwd());
 		      try {
 		    	  
 		    	  Member loginMember = memberService.login(member);
+		    	  System.out.println(loginMember+"dd");
 		    	  
-		    	  model.addAttribute("loginMember" ,loginMember);
-		    	  // request scope로 "loginMember"라는 key를 추가하고 
-		    	  // value로 loginMember 객체를 지정
+		    	  
+		    	  if(loginMember == null) {
+		    		  rdAttr.addFlashAttribute("status", "error");
+		    		  rdAttr.addFlashAttribute("msg", "로그인 실패");
+		    		  rdAttr.addFlashAttribute("text", "아이디 또는 비밀번호를 확인해주세요.");
+		    	  }else {
+		    		  model.addAttribute("loginMember", loginMember);
+		    		  // request scope로 "loginMember"라는 key를 추가하고 
+		    		  // value로 loginMember 객체를 지정
+		    	  }
 		    	  
 		    	  System.out.println(loginMember);
 		    	  
@@ -175,13 +180,62 @@ public class MemberController {
 			// @SessionAttribute()를 사용한 경우
 			// Session을 만료 시키기 위해서는
 			// SessionStatus.setComplate() 메소드를 사용해야 함.
+			
+			// @SessionAttribute() 로 추가된 session 은 
+			// removeAttribute()를 이용한 제거가 불가능함. 
+			
 			status.setComplete();
 			return "redirect:/"; 
 			
-		
 		}
 		
+		// 회원 가입 페이지 이동 
+		@RequestMapping(value="signUp",method=RequestMethod.GET)
+		public String signUpView() {
+			return "member/signUpView";
+			
+		}
 		
+		// 회원가입
+		@RequestMapping(value="signUpAction", method=RequestMethod.POST)
+		public String signUpAction(Member signUpMember, RedirectAttributes rdAttr) {
+			// RedirectAttributes : 리다이렉트 시 데이터를 전달할 수 있는 객체 
+			// addAttribute() : 리다이렉트하는 url에 쿼리스트링으로 값 전달 
+			// addFlashAttribute() : 
+			
+			// 응답 전 scope : request
+			// redirect scope : session
+			// 응답 페이지 scope : request
+			
+			System.out.println(signUpMember);
+			
+			try {
+				int result = memberService.signUp(signUpMember);
+				
+				String status = null;
+				String msg = null;
+				if(result > 0) {
+					status = "success";
+					msg = "가입 성공!";
+				}else {
+					status = "error";
+					msg = "가입 실패";
+				}
+				
+				rdAttr.addFlashAttribute("status", status);
+				rdAttr.addFlashAttribute("msg",msg);
+				
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			return "redirect:/";
+			
+			
+			
+			
+			
+		}
 	
 	
 }

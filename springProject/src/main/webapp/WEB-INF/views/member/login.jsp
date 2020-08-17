@@ -59,6 +59,10 @@
 				</label>
 			</div>
 			<button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+			
+			<a class="btn btn-lg btn-primary btn-block" href="signUp">signUp</a>
+			
+			
 		</form>
 	</div>
 	<jsp:include page="/WEB-INF/views/common/footer.jsp" />

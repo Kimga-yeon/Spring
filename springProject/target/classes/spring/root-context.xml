@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd">
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
 	
 	<!-- Root Context: defines shared resources visible to all other web components 
 			(다른 웹 구성 요소에 표시되는 공유 자원을 정의하는 곳 )
@@ -22,7 +24,8 @@
 	 	BasicDataSource dataSource = new BasicDataSource();
 	  -->
 	  
-	 <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+	  <!-- destroy-method="close" : 주어진 SqlSession이 종료되면 close 하라는 의미 -->
+	 <bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource" destroy-method="close">
 	 	<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver" />
 	 	<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
 	 	<property name="username" value="spring" />
@@ -42,6 +45,22 @@
 	     <property name="maxWaitMillis" value="60000"/> <!-- 예외 발생 전 커넥션이 반환 될 떄 까지 대기하는 최대 시간(ms), 기본 -1(무기한) -->
 		 
 	 </bean>
+	 
+	 <!-- 트랜잭션 처리를 위한 트랜잭션 매니저 추가  -->
+	 <bean id="transactionManager"
+	 		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	 		<property name="dataSource" ref="dataSource"/>
+	 </bean>
+	 
+	 <!-- 트랜잭션 매니저 추가 후 xml namespace에 tx 추가  -->
+	 <tx:annotation-driven/>
+	 <!-- 
+	 	@Transactional 어노테이션을 인식하여 트랜잭션 처리를 진행해라
+	 	
+	 	등록된 bean중 @Transactional 어노테이션이 붙은 메소드를 찾아
+	 	트랜잭션 처리를 할 수 있도록 트랜잭션 어드바이스를 적용 
+	 -->
+	 
 	 
 	  <!-- 
 	      SqlSession : sql구문을 DB에 전달, 실행하는 객체

@@ -40,8 +40,21 @@
 						     resultMap="memberResultSet">
 		SELECT*FROM MEMBER
 		WHERE MEMBER_ID = #{memberId}
-		AND MEMBER_PWD = #{memberPwd}
+		<!--  AND MEMBER_PWD = #{memberPwd}-->
 		AND MEMBER_STATUS='Y'
 	</select>
-
+	<!--  # = PreparedStatement / $ = Statement -->
+	
+	<!-- 회원가입 -->
+	<!-- insert, update, delete는 
+		반환형(resultType)이 모두 int형으로 고정이기 때문에 
+		별도의 resultType 속성을 작성할 필요가 없음. -->
+	<insert id="signUp" parameterType="Member" >
+		INSERT INTO MEMBER
+		VALUES(SEQ_MNO.NEXTVAL, #{memberId}, #{memberPwd},
+				#{memberName},#{memberPhone},#{memberEmail},
+				#{memberAddress},#{memberInterest},
+				DEFAULT,DEFAULT,DEFAULT)
+	
+	</insert>
 </mapper>

@@ -18,11 +18,28 @@ public class MemberDAO {
 	 * @throws Exception
 	 */
 	public Member login(Member member) throws Exception {
+		System.out.println(member+"ddddd");
+		
+		if(member==null) {
+			System.out.println("Heeeeeeee");
+			}
 		
 		return sqlSession.selectOne("memberMapper.loginMember", member);
 		// memberMapper라는 namespace를 갖는 mapper 파일에 
 		// id가 loginMember인 태그를 수행하는데 
 		// 수행 시 필요한 파라미터로  member를 전달 
 	}
+
+	
+	/** 회원가입 DAO
+	 * @param signUpMember
+	 * @return
+	 */
+	public int signUp(Member signUpMember) throws Exception{
+		
+		return sqlSession.insert("memberMapper.signUp", signUpMember);
+	}
+	
+	
 	
 }

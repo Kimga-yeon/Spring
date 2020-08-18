@@ -21,7 +21,7 @@ public class MemberServiceImpl implements MemberService{
 	
 	
 	@Override
-	public Member login(Member member) throws Exception {
+	public Member login(Member member) {
 
 
 		// bcrypt 방식으로 암호화를 진행한 경우 
@@ -41,20 +41,21 @@ public class MemberServiceImpl implements MemberService{
 //	            loginMember.setMemberPwd("");
 //	         }
 //	      }
+//		
 		
-		if(loginMember==null) {
-		System.out.println("Hello");
-		}
-		
-		if(!bcPwd.matches(member.getMemberPwd(), 
+		if(loginMember != null) {
+			if(!bcPwd.matches(member.getMemberPwd(), 
 						loginMember.getMemberPwd())) {
 			// 입력한 비밀번호가 DB에 저장된 값과 같지 않을 경우 
 			loginMember = null;
+			System.out.println("dkdkk");
 			
-		}else {
-			// 비교가 끝난 조회된 비밀번호 삭제 
-			loginMember.setMemberPwd(null);
+			}else {
+				// 비교가 끝난 조회된 비밀번호 삭제 
+				loginMember.setMemberPwd(null);
+			}
 		}
+		
 		
 		return loginMember;
 	}
@@ -106,6 +107,24 @@ public class MemberServiceImpl implements MemberService{
 		
 		int result = memberDAO.signUp(signUpMember);
 		return result;
+	}
+	
+
+	// ID 중복 검사 Service 구현
+	@Override
+	public int idDupCheck(String memberId) {
+		
+		return memberDAO.idDupCheck(memberId);
+	}
+
+	
+	// 회원 정보 수정 Service 구현 
+	@Transactional(rollbackFor = Exception.class)
+	// 어떤 예외가 발생하든 무조건 rollback 하겠다
+	@Override
+	public int updateMember(Member upMember) {
+
+		return memberDAO.updateMember(upMember);
 	}
 	
 }

@@ -15,7 +15,7 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 --><!-- The contents of this file will be loaded for each web application -->
-<Context workDir="C:\workspace\framework\springProject\src\main\webapp\WEB-INF\jspwork">
+<Context workDir="C:\Users\user1\git\Spring\springProject\src\main\webapp\WEB-INF\jspwork">
 
     <!-- Default set of monitored resources. If one of these changes, the    -->
     <!-- web application will be reloaded.                                   -->

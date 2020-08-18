@@ -1,10 +1,19 @@
 package com.kh.spring.member.controller;
 
+import java.sql.SQLException;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -138,7 +147,12 @@ public class MemberController {
 		// 충돌 또는 가독성을 생각하여 생략을 할지 말지를 잘 정해야 함.
 	
 		@RequestMapping("loginAction")
-		   public String loginAction(Member member,Model model, RedirectAttributes rdAttr ) {
+		   public String loginAction(Member member,Model model, RedirectAttributes rdAttr,
+				   					 String saveId, HttpServletResponse response) {
+			
+			// saveId : checkbox가 체크가 되어진 경우 별도의 value 속성이 없으면 "on"이라는 문자열이 전달됨.
+			// 			checkbox가 체크가 안 되어진 경우는 null
+			
 			
 			// Model : 전달하고자 하는 데이터를 맵형식(K,V) 형태로 담아 전달하는 객체
 			// 기본적으로 scope는 request임.
@@ -147,7 +161,6 @@ public class MemberController {
 			// @SessionAttributes() 어노테이션을 작성해야 함.
 			
 		     // System.out.println(member.getMemberId() + " / " + member.getMemberPwd());
-		      try {
 		    	  
 		    	  Member loginMember = memberService.login(member);
 		    	  System.out.println(loginMember+"dd");
@@ -161,13 +174,23 @@ public class MemberController {
 		    		  model.addAttribute("loginMember", loginMember);
 		    		  // request scope로 "loginMember"라는 key를 추가하고 
 		    		  // value로 loginMember 객체를 지정
+		    		  
+		    		  // 쿠키 객체 생성
+		    		  Cookie cookie = new Cookie("saveId", member.getMemberId());
+		    		  
+		    		  if(saveId != null) { // 아이디 저장이 체크된 경우
+		    			  // 쿠키 생성 
+		    			  // response를 사용하여 쿠키 생성 
+		    			  cookie.setMaxAge(60 * 60 * 24 * 7); // 쿠키를 1주일 유지
+		    			  
+		    		  }else {
+		    			  cookie.setMaxAge(0); // 쿠키 삭제
+		    		  }
+		    		  response.addCookie(cookie);
 		    	  }
 		    	  
 		    	  System.out.println(loginMember);
 		    	  
-		      } catch(Exception e) {
-		    	  e.printStackTrace();
-		      }
 		      
 		      
 		      return "redirect:/"; 
@@ -231,11 +254,123 @@ public class MemberController {
 			
 			return "redirect:/";
 			
+		}
+		
+		// 아이디 중복 체크
+		// @ResponseBody
+		// 메소드에서 리턴되는 값을 View Resolver로 전달하지 않고
+		// 비동기로 요청된 곳으로 리턴값을 가지고 돌아가게 하는 역할 
+		
+		// HTTP Response객체의 Body 부분에 리턴값을 담게하여 
+		// jsp로 포워드 되지 않고 기존 요청 페이지로 데이터를 전달하게 함.
+		
+		@ResponseBody
+		@RequestMapping("idDupCheck")
+		// ("idDupCheck") = get, post 따지지 않음
+		public String idDupCheck(String memberId) {
+			int result = memberService.idDupCheck(memberId);
 			
+			return result+"";
+		}
+		
+		
+		@RequestMapping("mypage")
+		public String myPage() {
+			return "member/mypage";
+		}
+		
+
+		
+		@RequestMapping("updateAction")
+		public String updateAction(Member upMember, Model model,
+								RedirectAttributes rdAttr, 
+								HttpServletRequest request) {
 			
+			// session scope에 있는 로그인 회언 정보를 얻어와
+			// id, name, grade 추출 -> upMember에 세팅 
+			Member loginMember = (Member)model.getAttribute("loginMember");
 			
+			upMember.setMemberNo(loginMember.getMemberNo());
+			upMember.setMemberEnrollDate(loginMember.getMemberEnrollDate());
+			upMember.setMemberId(loginMember.getMemberId());
+			upMember.setMemberName(loginMember.getMemberName());
+			upMember.setMemberGrade(loginMember.getMemberGrade());
+			
+			// 회원 정보 수정 Service 호출 
+			int result = memberService.updateMember(upMember);
+			
+			String status = null;
+			String msg = null;
+			
+			if(result > 0 ) {
+				status = "success";
+				msg = "회원 정보 수정 성공";
+				
+				// update 완료 후 수정된 회원 정보를 다시 Session에 올림
+				 model.addAttribute("loginMember", upMember);
+				// @SessionAttributes("loginMember")
+						 
+			}else {
+				status = "error";
+				msg = "회원 정보 수정 실패";
+			}
+			
+			rdAttr.addFlashAttribute("status", status);
+			rdAttr.addFlashAttribute("msg", msg);
+			
+			// select -> forward
+			// select를 하는 경우 DB에서 조회한 데이터를 이용해 응답 화면을 만들어야 함.
+			// -> 응답화면을 쉽게 만들기 위해 사용하는 게 JSP 
+			// -> JSP로 요청을 위임하기 위해서는 forward를 해야함.
+			// 단, 로그인 같이 조회 데이터를 Session에 세팅하는 경우는 redirect를 진행함.
+			
+			// DML -> redirect
+			// DML 수행 시 DB데이터가 변환되고 이를 다시 select해서 보여주는 상황이 많음
+			// -> select 결과를 보여주는 작업은 forward를 통해서 진행 해야함. 
+			// -> forward를 진행하는 주소를 다시 요청함(redirect)
+			
+			return "redirect:" + request.getHeader("referer");
+			// 이전 요청주소
 			
 		}
+		
+		
+		
+		
+		
+		/* 스프링에서 예외를 처리하는 방법
+		 * 1) try-catch, throws를 이용한 예외 처리 방법
+		 *  -> 메소드 레벨 
+		 *  
+		 * 2) @ExceptionHandler -> 클래스(컨트롤러) 레벨 
+		 * 	  (해당 컨트롤러에서 발생하는 모든 예외를 처리하는 메소드)
+		 * 
+		 * 3) @ControllerAdvice -> 전역 레벨 
+		 * 	  (해당 프로젝트에 발생하는 모든 예외를 처리하는 하나의 클래스)
+		 * 
+		 * */
 	
-	
+		// DB 관련 예외가 발생할 경우 처리하는 메소드
+		@ExceptionHandler({SQLException.class, BadSqlGrammarException.class}) 
+		public String dbException(Exception e, Model model) {
+			e.printStackTrace();
+			
+			model.addAttribute("errorMsg", "데이터베이스 관련 예외 발생");
+			
+			return "common/errorPage";
+			
+		}
+		
+		@ExceptionHandler(Exception.class) 
+		public String etcException(Exception e, Model model, HttpServletRequest request) {
+			e.printStackTrace();
+			
+			System.out.println(request.getRequestURI()); // 예외가 발생한 요청 주소
+			System.out.println(e.getStackTrace()[0]); // 예외 내용의 첫 줄 
+			System.out.println(e.getMessage()); // 예외 관련 메세지 출력
+			
+			model.addAttribute("errorMsg", "기타 예외 발생");
+			return "common/errorPage";
+			
+		}
 }

@@ -17,17 +17,17 @@ public class MemberDAO {
 	 * @return loginMember 
 	 * @throws Exception
 	 */
-	public Member login(Member member) throws Exception {
+	public Member login(Member member)  {
 		System.out.println(member+"ddddd");
 		
-		if(member==null) {
-			System.out.println("Heeeeeeee");
-			}
 		
 		return sqlSession.selectOne("memberMapper.loginMember", member);
 		// memberMapper라는 namespace를 갖는 mapper 파일에 
 		// id가 loginMember인 태그를 수행하는데 
 		// 수행 시 필요한 파라미터로  member를 전달 
+		
+			
+		
 	}
 
 	
@@ -38,6 +38,24 @@ public class MemberDAO {
 	public int signUp(Member signUpMember) throws Exception{
 		
 		return sqlSession.insert("memberMapper.signUp", signUpMember);
+	}
+
+
+	/** 아이디 중복 검사 DAO
+	 * @param memberId
+	 * @return result
+	 */
+	public int idDupCheck(String memberId) {
+		return sqlSession.selectOne("memberMapper.idDupCheck", memberId);
+	}
+
+
+	/** 회원 정보 수정 DAO
+	 * @param upMember
+	 * @return result
+	 */
+	public int updateMember(Member upMember) {
+		return sqlSession.update("memberMapper.updateMember", upMember);
 	}
 	
 	

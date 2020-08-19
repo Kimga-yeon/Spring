@@ -20,13 +20,10 @@ public class MemberDAO {
 	public Member login(Member member)  {
 		System.out.println(member+"ddddd");
 		
-		
 		return sqlSession.selectOne("memberMapper.loginMember", member);
 		// memberMapper라는 namespace를 갖는 mapper 파일에 
 		// id가 loginMember인 태그를 수행하는데 
 		// 수행 시 필요한 파라미터로  member를 전달 
-		
-			
 		
 	}
 
@@ -56,6 +53,25 @@ public class MemberDAO {
 	 */
 	public int updateMember(Member upMember) {
 		return sqlSession.update("memberMapper.updateMember", upMember);
+	}
+
+
+	/** 특정 회원 비밀번호 조회 DAO
+	 * @param memberNo
+	 * @return savePwd
+	 */
+	public String selectPwd(int memberNo) {
+		
+		return sqlSession.selectOne("memberMapper.selectPwd", memberNo);
+	}
+
+
+	/** 비밀번호 변경 DAO
+	 * @param loginMember
+	 * @return result
+	 */
+	public int updatePwd(Member loginMember) {
+		return sqlSession.update("memberMapper.updatePwd", loginMember);
 	}
 	
 	

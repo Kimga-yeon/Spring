@@ -126,5 +126,43 @@ public class MemberServiceImpl implements MemberService{
 
 		return memberDAO.updateMember(upMember);
 	}
+
+	/** 비밀번호 변경 Service 구현
+	 * @param loginMember
+	 * @param newPwd1
+	 * @return result
+	 */
+	@Transactional(rollbackFor = Exception.class)
+	@Override
+	public int updatePwd(Member loginMember, String newPwd1) {
+		
+		// 1) 입력받은 현재 비밀번호 일치 여부 판단 
+		// -> bcrypt 암호화를 사용하고 있어서 DB에서 비밀번호 일치 여부 판단이 안됨.
+		// --> DB에서 비밀번호를 조회해와 해당 Service에서 비교 
+		
+		String savePwd = memberDAO.selectPwd(loginMember.getMemberNo());
+		
+		int result = 0;
+		if(savePwd != null) {
+			
+			// 조회한 PWD와 입력받은 PWD가 같은지 비교
+			if(bcPwd.matches(loginMember.getMemberPwd(), savePwd)) {
+				
+				// 2) 비밀번호를 새로 입력받은 비밀번호로 수정
+				
+				// 새 비밀번호 암호화
+				String encPwd = bcPwd.encode(newPwd1);
+				
+				// 암호화된 비밀번호를 loginMember에 세팅 
+				loginMember.setMemberPwd(encPwd);
+				
+				// 비밀번호 변경 DAO 메소드 호출 
+				result = memberDAO.updatePwd(loginMember);
+			}
+				
+		}
+		
+		return result;
+	}
 	
 }

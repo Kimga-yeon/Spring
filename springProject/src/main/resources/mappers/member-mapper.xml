@@ -45,6 +45,9 @@
 	</select>
 	<!--  # = PreparedStatement / $ = Statement -->
 	
+	
+	
+	
 	<!-- 회원가입 -->
 	<!-- insert, update, delete는 
 		반환형(resultType)이 모두 int형으로 고정이기 때문에 
@@ -86,5 +89,18 @@
 	
 	</update>  
 
+	<!-- 비밀번호 조회 -->
+	<select id="selectPwd" parameterType="_int" resultType="string">
+		SELECT MEMBER_PWD FROM MEMBER WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+	
+	<!-- 비밀번호 수정 -->
+	<update id="updatePwd" parameterType="Member">
+		UPDATE MEMBER SET 
+		MEMBER_PWD = #{memberPwd}
+		WHERE MEMBER_NO = #{memberNo}
+	</update>
+	
 
 </mapper>

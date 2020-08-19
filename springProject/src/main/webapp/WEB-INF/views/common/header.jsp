@@ -81,10 +81,12 @@
                   </c:when>
 
                   <c:otherwise>
-                         <li class="nav-item"><a class="nav-link" href="${contextPath }/member/mypage">${loginMember.memberName}</a></li>
+                         <li class="nav-item"><a class="nav-link" href="${contextPath}/member/mypage">${loginMember.memberName}</a></li>
                          <li class="nav-item"><a class="nav-link" href="${contextPath}/member/logout">Logout</a></li>
                   </c:otherwise>
                </c:choose>
+               
+               <li class="nav-item"><a class="nav-link" href="${contextPath}/board/list/1">Free Board</a></li>
             </ul>
         </div>
     </nav>

@@ -27,6 +27,9 @@ import com.kh.spring.member.model.vo.Member;
 		   
 @SessionAttributes({"loginMember"})
 // Model에 추가된 key값 중 "loginMember" 라는 key를 가지는 데이터를 Session scope로 변경해라 
+// + Model.getAttribute("loginMember") 
+// 		-> Session 에서 "loginMember"라는 key를 가지는 속성의 값을 얻어와라
+
 @Controller // controller라는 의미 명시 (구체화된 어노테이션)
 @RequestMapping("/member/*") // value, method가 명시되지 않은 경우 
 						     // 작성된 값은 value로 인식, method는 자동 판별 
@@ -360,6 +363,65 @@ public class MemberController {
 			return "common/errorPage";
 			
 		}
+		
+		// 비밀번호 변경 화면 이동 
+		@RequestMapping("changePwd")
+		public String changePwd() {
+			return "member/changePwd";
+		}
+		
+		
+		// 비밀번호 변경
+		@RequestMapping("updatePwd")
+		public String updatePwd(String memberPwd, String newPwd1, Model model,
+						RedirectAttributes rdAttr) {
+			
+			// Session에서 로그인한 회원 정보를 얻어옴
+			Member loginMember = (Member)model.getAttribute("loginMember");
+								// Object타입이 되서 형변환 필요
+			
+			// loginMember 객체에 입력받은 현재 비밀번호 세팅
+			loginMember.setMemberPwd(memberPwd);
+			
+			// 비밀번호 변경 Service 호출
+			int result = memberService.updatePwd(loginMember, newPwd1);
+			
+			String status = null;
+			String msg = null;
+			String text = null;
+			if(result > 0) {
+				status = "success";
+				msg = "비밀번호 변경 성공";
+				
+			}else {
+				status = "error";
+				msg = "비밀번호 변경 실패";
+				text = "현재 비밀번호를 확인해 주세요";
+			}
+		
+			rdAttr.addFlashAttribute("status", status);
+			rdAttr.addFlashAttribute("msg", msg);
+			rdAttr.addFlashAttribute("text", text);
+			
+			return "redirect:changePwd";
+		}
+		
+		// 회원탈퇴 화면 이동
+		@RequestMapping("secession")
+		public String SessionAttributes(){
+			return "member/secession";
+		}
+		
+		
+		// 회원 탈퇴
+//		@RequestMapping("deleteMember")
+//		public String deleteMember(int memberNo, Model model,String memberPwd ) {
+			
+			
+			
+		//}
+		
+		
 		
 		@ExceptionHandler(Exception.class) 
 		public String etcException(Exception e, Model model, HttpServletRequest request) {

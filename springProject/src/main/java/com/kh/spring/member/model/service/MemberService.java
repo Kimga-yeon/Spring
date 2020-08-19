@@ -54,6 +54,15 @@ public interface MemberService {
 	 * @return result
 	 */
 	public abstract int updateMember(Member upMember);
+
+
+
+	/** 비밀번호 변경 Service
+	 * @param loginMember
+	 * @param newPwd1
+	 * @return result
+	 */
+	public abstract int updatePwd(Member loginMember, String newPwd1);
 	
 	
 }

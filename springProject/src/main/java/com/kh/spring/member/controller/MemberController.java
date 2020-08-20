@@ -414,12 +414,36 @@ public class MemberController {
 		
 		
 		// 회원 탈퇴
-//		@RequestMapping("deleteMember")
-//		public String deleteMember(int memberNo, Model model,String memberPwd ) {
+		@RequestMapping("deleteMember")
+		public String deleteMember(int memberNo, Model model,String memberPwd,
+									RedirectAttributes rdAttr) {
 			
+			Member loginMember = (Member)model.getAttribute("loginMember");
+			int result = memberService.deleteMember(loginMember, memberPwd);
+			loginMember.setMemberPwd(memberPwd);
 			
+
+			String status = null;
+			String msg = null;
+			String text = null;
+			if(result > 0) {
+				status = "success";
+				msg = "회원 탈퇴 성공";
+				
+			}else {
+				status = "error";
+				msg = "회원 탈퇴 실패";
+				text = "현재 비밀번호를 확인해 주세요";
+			}
+		
+			rdAttr.addFlashAttribute("status", status);
+			rdAttr.addFlashAttribute("msg", msg);
+			rdAttr.addFlashAttribute("text", text);
 			
-		//}
+			return "redirect:deletePwd";
+
+
+		}
 		
 		
 		

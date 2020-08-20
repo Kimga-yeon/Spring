@@ -63,6 +63,15 @@ public interface MemberService {
 	 * @return result
 	 */
 	public abstract int updatePwd(Member loginMember, String newPwd1);
+
+
+
+	/** 회원 탈퇴 Services
+	 * @param loginMember
+	 * @return result
+	 */ 
+
+	public abstract int deleteMember(Member loginMember, String memberPwd);
 	
 	
 }

@@ -15,16 +15,15 @@
 		margin: 0;
 	}
 	
-	.footer{
-		position: absolute;
-	    bottom: 0;
+	#content-main{
+		height : 770px;
 	}
 	  
 </style>
 </head>
 <body>
 	<jsp:include page="../common/header.jsp"/>
-	<div class="container mt-5 pt-5">
+	<div class="container mt-5 pt-5" id="content-main">
 
 		<div class="row">
 			<div class="col-sm-9">

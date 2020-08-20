@@ -73,6 +73,16 @@ public class MemberDAO {
 	public int updatePwd(Member loginMember) {
 		return sqlSession.update("memberMapper.updatePwd", loginMember);
 	}
+
+
+	/** 회원 탈퇴 DAO
+	 * @param loginMember
+	 * @return result
+	 */
+	public int deleteMember(Member loginMember) {
+		
+		return sqlSession.update("memberMapper.deleteMember", loginMember);
+	}
 	
 	
 	

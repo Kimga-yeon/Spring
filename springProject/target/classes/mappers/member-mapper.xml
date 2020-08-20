@@ -102,5 +102,11 @@
 		WHERE MEMBER_NO = #{memberNo}
 	</update>
 	
-
-</mapper>
+	<!-- 회원 탈퇴 -->
+	<update id="deleteMember" parameterType="Member">
+		UPDATE MEMBER SET
+		MEMBER_STATUS = 'N'
+		WHERE MEMBER_NO = #{memberNo}
+	
+	</update>
+</mapper> 

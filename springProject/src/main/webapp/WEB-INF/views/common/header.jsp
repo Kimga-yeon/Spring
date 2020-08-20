@@ -45,7 +45,10 @@
 		   h1, h2, h3, h4, h5, h6 {
 		       text-transform: initial;
 		   }
-      
+      	main , #content-main{
+      		min-hight : 100%
+      		
+      	}
     
       </style>   <!-- sweetalert : alert창을 꾸밀 수 있게 해주는 라이브러리 https://sweetalert.js.org/ -->
      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>

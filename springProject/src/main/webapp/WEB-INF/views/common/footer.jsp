@@ -7,14 +7,17 @@
 	.footer{
 		background-color: #bbb;
 		width : 100%;
+		height : 120px;
 	}
 </style>
 </head>
 <body>
 	<!-- Footer -->
-	<div class="py-5 footer" style="clear:both">
+	<div class="py-5 footer" >
 	  <div class="container">
-	    <p class="m-0 text-center text-white">Copyright &copy; KH Information Educational Institute A-Class</p>
+	  	<div class="row">
+	    	<div class="col-md-12 text-center text-white">Copyright &copy; KH Information Educational Institute A-Class</div>
+	 	</div>
 	  </div>
 	</div>
 	

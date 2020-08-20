@@ -164,5 +164,31 @@ public class MemberServiceImpl implements MemberService{
 		
 		return result;
 	}
+
 	
+
+	/**
+	 * 회원 탈퇴 Service 구현
+	 */
+	@Override
+	public int deleteMember(Member loginMember, String memberPwd) {
+		String savePwd = memberDAO.selectPwd(loginMember.getMemberNo());
+		
+		int result = 0;
+		if(savePwd != null) {
+			
+			// 조회한 PWD와 입력받은 PWD가 같은지 비교
+			if(bcPwd.matches(loginMember.getMemberPwd(), savePwd)) {
+				
+				// 2) 비밀번호를 새로 입력받은 비밀번호로 수정
+				
+				
+				// 비밀번호 변경 DAO 메소드 호출 
+				result = memberDAO.deleteMember(loginMember);
+			}
+				
+		}
+		
+		return result;
+	}
 }

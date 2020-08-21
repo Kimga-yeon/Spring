@@ -166,7 +166,6 @@ public class MemberController {
 		     // System.out.println(member.getMemberId() + " / " + member.getMemberPwd());
 		    	  
 		    	  Member loginMember = memberService.login(member);
-		    	  System.out.println(loginMember+"dd");
 		    	  
 		    	  
 		    	  if(loginMember == null) {
@@ -422,7 +421,8 @@ public class MemberController {
 			int result = memberService.deleteMember(loginMember, memberPwd);
 			loginMember.setMemberPwd(memberPwd);
 			
-
+			System.out.println(loginMember+"kkl");
+			
 			String status = null;
 			String msg = null;
 			String text = null;
@@ -440,7 +440,7 @@ public class MemberController {
 			rdAttr.addFlashAttribute("msg", msg);
 			rdAttr.addFlashAttribute("text", text);
 			
-			return "redirect:deletePwd";
+			return "redirect:/";
 
 
 		}

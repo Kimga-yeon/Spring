@@ -18,7 +18,6 @@ public class MemberDAO {
 	 * @throws Exception
 	 */
 	public Member login(Member member)  {
-		System.out.println(member+"ddddd");
 		
 		return sqlSession.selectOne("memberMapper.loginMember", member);
 		// memberMapper라는 namespace를 갖는 mapper 파일에 
@@ -80,8 +79,9 @@ public class MemberDAO {
 	 * @return result
 	 */
 	public int deleteMember(Member loginMember) {
-		
-		return sqlSession.update("memberMapper.deleteMember", loginMember);
+		int result = sqlSession.update("memberMapper.deleteMember", loginMember);
+		System.out.println(result + "dkdkdkjjjjj");
+		return result;
 	}
 	
 	

@@ -20,7 +20,10 @@
    <typeAliases>
       <typeAlias type="com.kh.spring.member.model.vo.Member"  alias="Member"/>
       <typeAlias type="com.kh.spring.board.model.vo.Board"  alias="Board"/>
+      <typeAlias type="com.kh.spring.board.model.vo.Attachment"  alias="Attachment"/>
+      
    </typeAliases>
+   
    
    <!-- mapper.xml 파일을 등록하는 태그 
       (파일명이 틀릴경우 서버 자체가 실행되지않음)

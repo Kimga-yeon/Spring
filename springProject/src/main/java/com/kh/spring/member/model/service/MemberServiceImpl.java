@@ -48,7 +48,6 @@ public class MemberServiceImpl implements MemberService{
 						loginMember.getMemberPwd())) {
 			// 입력한 비밀번호가 DB에 저장된 값과 같지 않을 경우 
 			loginMember = null;
-			System.out.println("dkdkk");
 			
 			}else {
 				// 비교가 끝난 조회된 비밀번호 삭제 
@@ -185,7 +184,10 @@ public class MemberServiceImpl implements MemberService{
 				
 				// 비밀번호 변경 DAO 메소드 호출 
 				result = memberDAO.deleteMember(loginMember);
+			}else {
+				System.out.println("kkkk");
 			}
+			
 				
 		}
 		

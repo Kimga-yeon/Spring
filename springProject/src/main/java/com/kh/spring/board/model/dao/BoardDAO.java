@@ -146,5 +146,35 @@ public class BoardDAO {
 
 
 
+	/** 게시글 썸네일 목록 조회 DAO
+	 * @param boardList
+	 * @return thList
+	 */
+	public List<Attachment> selectThumbnailList(List<Board> boardList) {
+		return sqlSession.selectList("boardMapper.selectThumbnailList", boardList);
+	}
+
+
+
+	/** 파일 정보 수정 DAO
+	 * @param at
+	 * @return result
+	 */
+	public int updateAttachment(Attachment at) {
+		return sqlSession.update("boardMapper.updateAttachment",at);
+	}
+
+
+
+	/** 파일 1개 정보 삭제 DAO
+	 * @param fileNo
+	 * @return result
+	 */
+	public int deleteAttachment2(int fileNo) {
+		return sqlSession.delete("boardMapper.deleteAttachment2",fileNo);
+	}
+
+
+
 	
 }

@@ -1,5 +1,6 @@
 package com.kh.spring.board.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -53,13 +55,28 @@ public class BoardController {
 		// 3) 게시글 목록 조회
 		List<Board> boardList = boardService.selectList(pInfo);
 		
+		/*
 		for(Board b : boardList) {
 			System.out.println(b);
 		}
+		*/
 		
-		model.addAttribute("boardList",boardList);
-		model.addAttribute("pInfo",pInfo);
-		
+		// 4) 썸네일 목록 조회
+		if(!boardList.isEmpty()) { // 게시글 목록 조회 결과가 있을 경우 
+			// 마이바티스 List 조회 시 조회 결과가 없어도 비어 있는 List[] 가 반환이 됨.
+			List<Attachment> thList = boardService.selectThumbnailList(boardList);
+			
+			for(Attachment at : thList) {
+				System.out.println(at);
+			}
+			
+			model.addAttribute("thList",thList);
+			
+		}
+			// 썸네일 목록을 응답페이지 전달 
+			model.addAttribute("boardList",boardList);
+			model.addAttribute("pInfo",pInfo);
+			
 		
 		return "board/boardList";
 	}
@@ -141,71 +158,57 @@ public class BoardController {
 		// 썸네일 이미지 정보를 images 리스트 제일 앞에 추가 
 		images.add(0, thumbnail);
 		
-		// 파일을 저장할 서버 컴퓨터의 로컬 경로
+		/// 파일을 저장할 서버 컴퓨터의 로컬 경로
 		String savePath = request.getSession().getServletContext().getRealPath("resources/uploadImages");
 		
-		// 게시글 작성 Service 호출
-		int result = boardService.insertBoard(board, images, savePath);
+		int result  = boardService.insertBoard(board, images, savePath);
 		
-		String status = null;
-		String msg = null;
-		String url = null;
-		
-		if(result > 0) {
+		String status;
+		String msg;
+		String path;
+		if (result > 0) {
 			status = "success";
-			msg = "게시글 등록 성공";
-			url = board.getBoardNo() + "?cp=1";
-		}else {
+			msg = "게시글 삽입 성공";
+			path = "redirect:"+board.getBoardNo()+"?cp=1";
+		} else {
 			status = "error";
-			msg = "게시글 등록 실패";
-			url = "insert";
+			msg = "게시글 삽입 실패";
+			path = "insert";
 		}
-		
 		rdAttr.addFlashAttribute("status",status);
 		rdAttr.addFlashAttribute("msg",msg);
 		
-		return "redirect:" + url;
+		return path;
 	}
 	
 
 	// 게시글 삭제
 	// spring/board/1/515/delete
-	@RequestMapping("{type}/{boardNo}/delete")
-	public String deleteBoard(@PathVariable int type,
-							  @PathVariable int boardNo,
-							  RedirectAttributes rdAttr,
-							  HttpServletRequest request) {
-		
-		
-		
+	@GetMapping("{type}/{boardNo}/delete")
+	public String deleteBoard(@PathVariable int type, @PathVariable int boardNo, RedirectAttributes rdAttr, HttpServletRequest request) {
 		int result = boardService.deleteBoard(boardNo);
 		
-		
-		 // 삭제 성공 시 해당 게시판 목록 1페이지
-		
-		String status = null;
-		String msg = null;
-		String url = null;
-		
-		if(result > 0) {
+		String status;
+		String msg;
+		String path;
+		if (result > 0) {
 			status = "success";
-			msg = "삭제되었습니다.";
+			msg = "게시글 삭제 성공";
+//			path = request.getContextPath()+"/board/list/"+type;d
 			
-			// redirect 기 제일 앞 "/" 기호는 contextPath를 의미함.
-			url = "/board/list/" + type;
-		}else {
-			// 삭제 실패 시 이전 요청 주소(상세조회 페이지)
+			// 리다이렉트시 제일 앞 "/" 기호는 contextPath를 의미함.
+			path = "/board/list/"+type;
+		} else {
 			status = "error";
 			msg = "게시글 삭제 실패";
-			url = request.getHeader("referer");
+			path = request.getHeader("referer");
 		}
 		
-		rdAttr.addFlashAttribute("status",status);
+		rdAttr.addFlashAttribute("status", status);
 		rdAttr.addFlashAttribute("msg",msg);
+		return "redirect:"+path;
 		
-		return "redirect:" + url;
-	}
-	
+	}	
 	
 	/* ModelAndView
 	 * 
@@ -215,67 +218,92 @@ public class BoardController {
 	 * 단순히 응답페이지에 데이터 전달, viewName설정 시 사용하는 객체
 	 * */
 	
-	// 게시글 수정
+	  // 게시글 수정
 	@RequestMapping("{type}/{boardNo}/update")
-	public ModelAndView updateView(@PathVariable int boardNo,
-								  ModelAndView mv ) {
+	public ModelAndView updateView(@PathVariable int boardNo, ModelAndView mv) {
 		
-		// 기존 게시글 정보를 얻어와 update화면에 출력해 이전 작성 내용을 보여주어야 함.
-		
-		Board board = boardService.selectBoard(boardNo);
-		
-		mv.addObject("board",board);
-		mv.setViewName("board/boardUpdate");
-		
-		return mv;
-		
-	}
+	         // 1) 기존 게시글 정보를 얻어와 update 화면에 출력해 이전 작성 내용을 보여주어야 함.
+	         //       --> 상세조회 사용
+			 Board board = boardService.selectBoard(boardNo);
+	         
+	         //--------------------------------------------------------
+	         // 기존 게시글 이미지 조회 및 전달
+			 if (board != null) {
+					List<Attachment> files = boardService.selectFiles(boardNo);
+					mv.addObject("files",files);
+				}
+	         //--------------------------------------------------------
+	         
+			 mv.addObject("board", board);
+			 mv.setViewName("board/boardUpdate");
+				
+			return mv;
+	      }
 	
 	// 게시글 수정
-	@Transactional(rollbackFor = Exception.class)
-	@RequestMapping("{type}/{boardNo}/updateAction")
-	public ModelAndView updateAction(@PathVariable int type,
-									 @PathVariable int boardNo,
-									 ModelAndView mv,
-									 Board upBoard,int cp,
-									 RedirectAttributes rdAttr,
-									 HttpServletRequest request){
 		
-		
-		upBoard.setBoardNo(boardNo);
-		
-		int result = boardService.updateBoard(upBoard);
-		
-		String status = null;
-		String msg = null;
-		String url = null;
-		
-		
-		// 수정 성공 시 상세조회 화면으로 
-		if(result > 0) {
-			status = "success";
-			msg = "게시글 수정 성공.";
+		@RequestMapping("{type}/{boardNo}/updateAction")
+		public ModelAndView updateAction(@PathVariable int type, @PathVariable int boardNo, ModelAndView mv, 
+										Board upBoard, int cp, boolean[] deleteImages, 
+										RedirectAttributes rdAttr, HttpServletRequest request,
+										@RequestParam(value="thumbnail", required = false) MultipartFile thumbnail,
+										@RequestParam(value="images", required = false) List<MultipartFile> images) {
 			
-			// 현재 : {type}/{boardNo}/updateAction?cp=1
-			// 상세 : {type}/{boardNo}?cp=1
-			url = "../" + boardNo + "?cp=" + cp;
+			upBoard.setBoardNo(boardNo);
 			
-		}else {
-			// 실패 시 이전 요청주소(수정화면)
-			status = "error";
-			msg = "게시글 수정 실패";
-			url = request.getHeader("referer");
+			
+			
+			// 이미지 수정
+			// ---------------------------------------------------
+			
+			// 업로드된 파일 이름 확인 
+			// -> 파일 이름이 출력된 경우 == 이미지가 수정된 경우
+			System.out.println("thumbnail : " + thumbnail.getOriginalFilename());
+			for(int i=0; i<images.size(); i++) {
+				System.out.println("images[" + i + "] : " + images.get(i).getOriginalFilename());
+				
+			}
+			// 썸네일 이미지를 images 리스트 0qjs 인덱스에 추가
+			images.add(0,thumbnail);
+			
+			// 파일 저장 경로 지정
+			String savePath = request.getSession().getServletContext().getRealPath("resources/uploadImages");
+			
+			
+			
+			int result = boardService.updateBoard(upBoard, savePath,images,deleteImages);
+			
+			String status = null;
+			String msg = null;
+			String url = null;
+			
+			
+			// 수정 성공 시 상세조회 화면으로 
+			if(result > 0) {
+				status = "success";
+				msg = "게시글 수정 성공.";
+				
+				// 현재 : {type}/{boardNo}/updateAction?cp=1
+				// 상세 : {type}/{boardNo}?cp=1
+				url = "../" + boardNo + "?cp=" + cp;
+				
+			}else {
+				// 실패 시 이전 요청주소(수정화면)
+				status = "error";
+				msg = "게시글 수정 실패";
+				url = request.getHeader("referer");
+			}
+			
+			
+			rdAttr.addFlashAttribute("status", status);
+			rdAttr.addFlashAttribute("msg",msg);
+			
+//			mv.addObject("board", upBoard);
+			mv.setViewName("redirect:" + url);
+			
+			return mv;
+			
 		}
-		
-		mv.setViewName("redirect:" + url);
-		
-		rdAttr.addFlashAttribute("status",status);
-		rdAttr.addFlashAttribute("msg",msg);
-		
-		
-		return mv;
-		
-	}
 	
 	
 	

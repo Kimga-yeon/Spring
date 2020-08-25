@@ -5,18 +5,16 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${board.boardName}</title>
+<title>${board.boardName }</title>
 <style>
 	#board-area{ margin-bottom:100px;}
 	#board-content{ padding-bottom:150px;}
 	#date-area{font-size: 12px; line-height: 12px}
 	#date-area>p{margin: 0}
  
-
 	.boardImgArea{
 		height: 300px;
 	}
-
 	.boardImg{
 		width : 100%;
 		height: 100%;
@@ -63,11 +61,11 @@
 
 				<!-- Writer -->
 				<div class="lead">
-					작성자 :${board.boardWriter } <br>
-				 	<span class="float-right">조회수 : ${board.readCount } </span>
+					작성자 : ${board.boardWriter}<br>
+				 	<span class="float-right">조회수 : ${board.readCount}</span>
 					<div id="date-area">
 						<p>작성일 : ${board.boardCreateDate }</p>
-						<p>마지막 수정일 : ${board.boardModifyDate } </p>  
+						<p>마지막 수정일 : ${board.boardModifyDate }</p>  
 					</div>
 					
 				</div>
@@ -105,11 +103,10 @@
 
 				<!-- Content -->
 				<div id="board-content">
-					<!-- JSTL/JSP 개행문자 처리 -->
 					<% pageContext.setAttribute("newLine", "\n"); %>
-					${fn:replace(board.boardContent,newLine,"<br>") }
-					
-					
+			        <% pageContext.setAttribute("newLine", "\n"); %>
+                    ${fn:replace(board.boardContent,newLine,"<br>") }
+				    ${board.boardContent }
 				</div>
 
 				<hr>
@@ -117,21 +114,16 @@
 				<div>
 					<div class="float-right">
 						<a class="btn btn-primary" 
-							href="<c:url value="../list/${board.boardType }">
-									<c:param name="cp" value="${param.cp}"/>
-								  </c:url>">목록으로</a>
-								  
-							<!-- 상세조회 주소 예시 : board/1/500?cp=1 -->
-							<!-- 목록으로 주소 예시 : board/list/1?cp=1 -->
-							
+							href="<c:url value="../list/${board.boardType}"><c:param name="cp" value="${param.cp}"/></c:url>">목록으로</a>
+							<!-- 상세 주소 예시 : /1/500?cp=500 -->
+							<!-- 목록 주소 예시 : /list/1?cp=1 -->
 	                	
 	                	<!-- 글 작성자와 로그인한 회원이 같을 경우 -->
-	                	
-	                	<c:if test="${board.boardWriter == sessionScope.loginMember.memberId }">
-	                		<c:url var="updateUrl" value="${board.boardNo }/update">
-	                			<c:param name="cp" value="${param.cp }"/>
-	                		</c:url>
+	                	<c:if test="${board.boardWriter == loginMember.memberId}">
 	                		
+	                		<c:url var="updateUrl" value="${board.boardNo}/update">
+	                			<c:param name="cp" value="${param.cp}"/>
+	                		</c:url>
 							<a href="${updateUrl}" class="btn btn-primary ml-1 mr-1">수정</a>
 							<button id="deleteBtn" class="btn btn-primary">삭제</button> 
 						</c:if>
@@ -146,14 +138,12 @@
 	</div>
 	<jsp:include page="../common/footer.jsp"/>
 	
-	<script>	
-		$("#deleteBtn").on("click",function(){
+	<script>
+		$("#deleteBtn").on("click", function(){
 			if(confirm("정말 삭제 하시겠습니까?")){
-				// spring/board/1/515/delete
-				location.href = "${board.boardNo}/delete";
+				location.href = "${board.boardNo}/delete"; 
 			}
 		});
-		
 		
 	</script>
 </body>

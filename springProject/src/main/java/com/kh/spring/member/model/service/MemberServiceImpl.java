@@ -55,9 +55,16 @@ public class MemberServiceImpl implements MemberService{
 			}
 		}
 		
+		//에러 확인 
+		//String s = null;
+		//System.out.println(s.charAt(0));
 		
 		return loginMember;
 	}
+	
+
+	
+	
 
 	// 회원가입 Service구현
 	// 스프링에서는 트랜잭션 처리할 방법을 제공해줌(코드기반, 선언적 방법

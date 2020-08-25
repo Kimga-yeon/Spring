@@ -11,7 +11,7 @@
       width: 80px;
       line-height: 40px
     }
-    #content-main{margin: 100px auto;}
+    #content-main{margin:100px auto;}
 </style>
 </head>
 <body>
@@ -22,13 +22,12 @@
 
 			<h3>게시글 등록</h3>
 			<hr>
-			<!-- encType : form 태그 데이터가 서버에 제출 될 때에 인코딩 방법을 지정하는 속성 
-				(기본값 : application/x-www-form-urlencoded : 데이터를 서버에 전송하기 전에 문자로 인코딩)
-				multipart/form-data : 모든 데이터를 인코딩 하지 않음(원본 데이터 상태(바이트)-> 파일을 서버에 전달 가능)
-			-->
-					
-			<form action="insertAction" method="post" role="form" 
-			  	  encType="multipart/form-data" onsubmit="return validate();">
+			<!-- enctype: form태그 데이터가 서버에 제출 될 때의 인코딩 방법을 지정하는 속성
+				 기본값 : "application/x-www-form-urlencoded" : 데이터를 서버에 전송하기 전에 문자로 인코딩
+				 multipart/form-data : 모든 데이터를 인코딩 하지 않음(원본 데이트 상태(바이트) -> 파일을 서버에 전달 가능)
+				 
+				   -->
+			<form action="insertAction" method="post" role="form"  enctype="multipart/form-data" onsubmit="return validate();">
 
 				<div class="mb-2">
 					<label class="input-group-addon mr-3 insert-label">카테고리</label> 
@@ -119,7 +118,6 @@
 	<jsp:include page="../common/footer.jsp"/>
 
 	<script>
-
 		// 유효성 검사
 		function validate() {
 			if ($("#title").val().trim().length == 0) {
@@ -127,7 +125,6 @@
 				$("#title").focus();
 				return false;
 			}
-
 			if ($("#content").val().trim().length == 0) {
 				alert("내용을 입력해 주세요.");
 				$("#content").focus();
@@ -138,7 +135,6 @@
 		 // 이미지 공간을 클릭할 때 파일 첨부 창이 뜨도록 설정하는 함수
 	    $(function () {
 	       $("#fileArea").hide();
-
 	      $("#titleImgArea").click(function () {
 	        $("#img1").click();
 	      });
@@ -151,14 +147,11 @@
 	      $("#contentImgArea3").click(function () {
 	        $("#img4").click();
 	      });
-
 	    });
-
 	    // 각각의 영역에 파일을 첨부 했을 경우 미리 보기가 가능하도록 하는 함수
 	    function LoadImg(value, num) {
 	      if (value.files && value.files[0]) {
 	        var reader = new FileReader();
-
 	        reader.onload = function (e) {
 	          switch (num) {
 	            case 1:
@@ -175,7 +168,6 @@
 	              break;
 	          }
 	        }
-
 	        reader.readAsDataURL(value.files[0]);
 	      }
 	    }

@@ -67,9 +67,20 @@
                               board라는 변수에 저장하여 내부에서 사용
                          -->
                          <tr>
-                            <td>${board.boardNo}</td>
-                            <td>${board.boardCategory}</td>
-                            <td class="boardTitle">${board.boardTitle}</td>
+                            <td>${board.boardNo }</td>
+		                			<td>${board.boardCategory}</td>
+		                			<td class="boardTitle">
+		                				<c:forEach items="${thList}" var="th">
+		                					<c:if test="${th.parentBoardNo == board.boardNo}">
+		                					  <%-- 현재 출력 중인 게시글 목록 번호와 일치하는 썸네일 목록이 있을 경우  --%>
+		                						<c:set var="src" value="${contextPath}${th.filePath}/${th.fileChangeName}"/>
+		                						<img src="${src}">
+		                					</c:if>
+		                					
+                            	</c:forEach>
+                            	
+                            	${board.boardTitle}</td>
+                            	
                             <td>${board.boardWriter}</td>
                             <td>${board.readCount}</td>
                             <td>

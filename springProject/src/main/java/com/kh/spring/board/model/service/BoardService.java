@@ -55,9 +55,12 @@ public interface BoardService {
 
 	/** 게시글 수정 Service
 	 * @param upBoard
+	 * @param images 
+	 * @param savePath 
+	 * @param deleteImages 
 	 * @return result
 	 */
-	int updateBoard(Board upBoard);
+	int updateBoard(Board upBoard, String savePath, List<MultipartFile> images, boolean[] deleteImages);
 
 
 
@@ -66,5 +69,18 @@ public interface BoardService {
 	 * @return files
 	 */
 	List<Attachment> selectFiles(int boardNo);
+
+
+
+	/** 게시글 썸네일 목록 조회 Service
+	 * @param boardList
+	 * @return thList
+	 */
+	List<Attachment> selectThumbnailList(List<Board> boardList);
+
+
+
+
+
 
 }

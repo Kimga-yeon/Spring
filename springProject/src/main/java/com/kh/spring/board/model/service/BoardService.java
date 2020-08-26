@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.kh.spring.board.model.vo.Attachment;
 import com.kh.spring.board.model.vo.Board;
 import com.kh.spring.board.model.vo.PageInfo;
+import com.kh.spring.board.model.vo.Search;
 
 public interface BoardService {
 
@@ -78,6 +79,30 @@ public interface BoardService {
 	 */
 	List<Attachment> selectThumbnailList(List<Board> boardList);
 
+
+
+	/** 게시판 조회수 높은 게시글 조회 Service
+	 * @param type
+	 * @return list
+	 */
+	List<Board> selectTopViews(int type);
+
+
+
+	/** 검색 조건이 추가된 페이징 처리
+	 * @param type
+	 * @param cp
+	 * @param search
+	 * @return pInfo
+	 */
+	PageInfo pagenation(int type, int cp, Search search);
+
+	/** 검색 목록 조회 Service
+	 * @param pInfo
+	 * @param search
+	 * @return boardList
+	 */
+	List<Board> selectSearchList(PageInfo pInfo, Search search);
 
 
 

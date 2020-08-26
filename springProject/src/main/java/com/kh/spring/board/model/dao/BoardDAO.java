@@ -1,6 +1,7 @@
 package com.kh.spring.board.model.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -174,6 +175,37 @@ public class BoardDAO {
 		return sqlSession.delete("boardMapper.deleteAttachment2",fileNo);
 	}
 
+
+
+	/** 조회수 높은 게시글 조회 DAO
+	 * @param type
+	 * @return
+	 */
+	public List<Board> selectTopViews(int type) {
+		return sqlSession.selectList("boardMapper.selectTopViews",type);
+	}
+
+
+
+	/** 검색 조건이 추가된 페이징 처리 DAO
+	 * @param map
+	 * @return searchListCount
+	 */
+	public int getListCount(Map<String, Object> map) {
+		return sqlSession.selectOne("boardMapper.getSearchListCount", map);
+	}
+
+	/** 검색 목록 조회 DAO
+	 * @param pInfo
+	 * @param map
+	 * @return boardList
+	 */
+	public List<Board> selectSearchList(PageInfo pInfo, Map<String, Object> map) {
+		int offset = (pInfo.getCurrentPage() - 1) * pInfo.getLimit();
+		
+		RowBounds rowbounds = new RowBounds(offset, pInfo.getLimit());
+		return sqlSession.selectList("boardMapper.selectSearchList", map, rowbounds);
+	}
 
 
 	

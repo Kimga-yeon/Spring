@@ -1,10 +1,11 @@
 package com.kh.spring.board.model.service;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +16,7 @@ import com.kh.spring.board.model.dao.BoardDAO;
 import com.kh.spring.board.model.vo.Attachment;
 import com.kh.spring.board.model.vo.Board;
 import com.kh.spring.board.model.vo.PageInfo;
+import com.kh.spring.board.model.vo.Search;
 
 @Service
 public class BoardServiceImpl implements BoardService{
@@ -301,6 +303,43 @@ public class BoardServiceImpl implements BoardService{
 		public List<Attachment> selectThumbnailList(List<Board> boardList) {
 			return boardDAO.selectThumbnailList(boardList);
 		}
+
+		
+		// 게시판 조회수 높은 게시글 조회 Service 구현
+		@Override
+		public List<Board> selectTopViews(int type) {
+			return boardDAO.selectTopViews(type);
+		}
+
+		// 검색조건이 추가된 페이징 처리를 위한 Service 구현
+		@Override
+		public PageInfo pagenation(int type, int cp, Search search) {
+			// 1) 검색 조건이 맞는 전체 게시글 수 조회
+			Map<String, Object> map = new HashMap<>();
+			map.put("search", search);
+			map.put("type", type);
+			
+			int listCount = boardDAO.getListCount(map);
+
+			// 2) setPageInfo 호출
+			pInfo.setPageInfo(cp, listCount, type);
+
+			return pInfo;
+		}
+
+		// 검색 목록 조회 Service
+		@Override
+		public List<Board> selectSearchList(PageInfo pInfo, Search search) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("search", search);
+			map.put("type", pInfo.getBoardType());
+			
+			
+			return boardDAO.selectSearchList(pInfo, map);
+		}
+		
+	
+		
 
 		
 }

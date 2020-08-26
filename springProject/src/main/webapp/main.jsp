@@ -77,18 +77,20 @@
 		<!-- Three columns of text below the carousel -->
 		<div class="row">
 			<div class="col-lg-4">
-				<svg class="bd-placeholder-img rounded-circle" width="140" height="140" xmlns="http://www.w3.org/2000/svg"
-					preserveAspectRatio="xMidYMid slice" focusable="false" role="img"aria-label="Placeholder: 140x140">
-					<title>Placeholder</title><rect width="100%" height="100%"fill="#777" />
-					<text x="50%" y="50%" fill="#777" dy=".3em">140x140</text></svg>
-				<h2>Heading</h2>
-				<p>Donec sed odio dui. Etiam porta sem malesuada magna mollis
-					euismod. Nullam id dolor id nibh ultricies vehicula ut id elit.
-					Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
-					Praesent commodo cursus magna.</p>
-				<p>
-					<a class="btn btn-secondary" href="#" role="button">View details &raquo;</a>
-				</p>
+				<h3>자유게시판 조회수 Top5</h3>
+                <h5>(최근 5일)</h5>
+                <table align="center">
+                    <thead>
+                        <th>글번호</th>
+                        <th>제목</th>
+                        <th>작성자</th>
+                        <th>조회수</th>
+                    </thead>
+
+                    <tbody id="freeBoard-topViews">
+
+                    </tbody>
+                </table>
 			</div>
 			<!-- /.col-lg-4 -->
 			<div class="col-lg-4">
@@ -127,5 +129,46 @@
 	</main>
 
 	<jsp:include page="WEB-INF/views/common/footer.jsp" />
+	
+	<script>
+		
+		$(function(){
+			topViews(1); // 함수 호출
+			
+			// 일정 시간 (1분)마다 리스트 갱신 
+			setInterval(function(){
+				topViews(1)
+			},60000);
+		})
+		
+		function topViews(boardType){
+			$.ajax({
+				url : "board/topViews/" + boardType,
+				dataType : "json" , 
+				success : function(list){
+					console.log(list);
+					
+					$("#freeBoard-topViews").html(""); // 리스트 갱신을 위해 이전 내용 삭제
+					
+					$.each(list, function(index,item){
+						var $tr = $("<tr>"); // 행
+						var $td1 = $("<td>").text(item.boardNo);
+						var $td2 = $("<td>").text(item.boardTitle);
+						var $td3 = $("<td>").text(item.boardWriter);
+						var $td4 = $("<td>").text(item.readCount);
+						
+						$tr.append($td1, $td2, $td3, $td4);
+						$("#freeBoard-topViews").append($tr);
+					});
+					
+				},error : function(){
+					console.log("ajax 통신 실패");
+				}
+				
+			});
+		}
+	</script>
+	
+	
 </body>
 </html>

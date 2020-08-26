@@ -1,28 +1,31 @@
 package com.kh.spring.board.controller;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.kh.spring.board.model.service.BoardService;
 import com.kh.spring.board.model.vo.Attachment;
 import com.kh.spring.board.model.vo.Board;
 import com.kh.spring.board.model.vo.PageInfo;
+import com.kh.spring.board.model.vo.Search;
 import com.kh.spring.member.model.vo.Member;
 
 @SessionAttributes({"loginMember"})
@@ -302,9 +305,50 @@ public class BoardController {
 			mv.setViewName("redirect:" + url);
 			
 			return mv;
+		}
+		
+		// 게시판 조회수 높은 게시글 조회
+		@ResponseBody
+		@RequestMapping("topViews/{type}")
+		public String topViews(@PathVariable int type) {
+			List<Board> list = boardService.selectTopViews(type);
 			
+			// Gson
+			Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd").create();
+			
+			
+			return gson.toJson(list);
 		}
 	
-	
+		// 게시글 검색
+		@RequestMapping("search/{type}")
+		public String search(@PathVariable int type, @RequestParam(value = "cp", required = false, defaultValue = "1") int cp,
+						@ModelAttribute Search search, Model model) {
+			System.out.println(search);
+			System.out.println(type);
+			
+			// 1. 검색 내용이 포함된 게시글 수 조회
+			PageInfo pInfo = boardService.pagenation(type, cp, search);
+			
+			System.out.println(pInfo);
+			
+			// 2. 검색 게시글 목록 조회
+			List<Board> boardList = boardService.selectSearchList(pInfo, search);
+			
+			boardList.stream().forEach(System.out::println);
+			
+			// 3. 썸네일 목록 조회
+			if (!boardList.isEmpty()) {
+				List<Attachment> thList = boardService.selectThumbnailList(boardList);
+				model.addAttribute("thList", thList);
+			}
+			
+			model.addAttribute("boardList", boardList);
+			model.addAttribute("pInfo", pInfo);
+			
+			return "board/boardList";
+		}
+		
+		
 	
 }

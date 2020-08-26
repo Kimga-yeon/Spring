@@ -17,21 +17,22 @@
       ex) Member VO의 정식 이름(풀네임) :
          com.kh.spring.member.model.vo.Member  
    -->
-   <typeAliases>
-      <typeAlias type="com.kh.spring.member.model.vo.Member"  alias="Member"/>
-      <typeAlias type="com.kh.spring.board.model.vo.Board"  alias="Board"/>
-      <typeAlias type="com.kh.spring.board.model.vo.Attachment"  alias="Attachment"/>
-      
-   </typeAliases>
+  <typeAliases>
+		<typeAlias type="com.kh.spring.member.model.vo.Member" alias="Member"/>
+		<typeAlias type="com.kh.spring.board.model.vo.Board" alias="Board"/>
+		<typeAlias type="com.kh.spring.board.model.vo.Attachment" alias="Attachment"/>
+		<typeAlias type="com.kh.spring.board.model.vo.Reply" alias="Reply"/>
+	</typeAliases>
    
    
    <!-- mapper.xml 파일을 등록하는 태그 
       (파일명이 틀릴경우 서버 자체가 실행되지않음)
    -->
-   <mappers>
-      <mapper resource="/mappers/member-mapper.xml"/>
-      <mapper resource="/mappers/board-mapper.xml"/>
-   </mappers>
+  <mappers>
+		<mapper resource="/mappers/member-mapper.xml"/>
+		<mapper resource="/mappers/board-mapper.xml"/>
+		<mapper resource="/mappers/reply-mapper.xml"/>
+	</mappers>
    
    
    

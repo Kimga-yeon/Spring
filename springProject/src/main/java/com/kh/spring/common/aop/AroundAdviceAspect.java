@@ -56,6 +56,11 @@ public class AroundAdviceAspect {
 				
 		
 		// proceed() 메소드 호출 
+		// 타겟으로 삼은 오브젝트의 메소드가 실행되고있는 것 
+				// 서비스임플안에 포인트 컷 있는 메소드들이 실행될때가 이 메소드 실행시점
+				// 이메소드를 전후로 비포, 에프터
+				// 리턴값이 매개변수로 들어옴 
+				// pp.proceed () = 타겟 메소드 
 		Object obj = pp.proceed();  // 서비스 시작 시 ms값
 		
 		long endMs = System.currentTimeMillis(); // 서비스 종료시 ms값
@@ -71,8 +76,14 @@ public class AroundAdviceAspect {
 					logger.debug("---------------------------------------------------------------------------");
 				}
 		
+		// Around Advice의 반환값은
+		// Target method의 결과값으로 대체가 됨.
+				
+		return obj; // ojb 가공없이 리턴 == 기존 target method결과를 그대로 반환함.
 		
-		return obj;
+		// Around Advice는 반환형이 void 인 경우 자동으로 null값을 반환하게 함.
+		
+		
 	}
 	
 }

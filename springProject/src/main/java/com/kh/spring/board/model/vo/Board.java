@@ -4,7 +4,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Board {
-	private int BoardNo;
+	private int boardNo;
 	private String boardTitle;
 	private String boardContent;
 	private int readCount;
@@ -24,7 +24,7 @@ public class Board {
 	public Board(int boardNo, String boardTitle, String boardContent, int readCount, Timestamp boardCreateDate,
 			Timestamp boardModifyDate, String boardWriter, String boardCategory, int boardType, String boardName) {
 		super();
-		BoardNo = boardNo;
+		this.boardNo = boardNo;
 		this.boardTitle = boardTitle;
 		this.boardContent = boardContent;
 		this.readCount = readCount;
@@ -38,12 +38,12 @@ public class Board {
 
 
 	public int getBoardNo() {
-		return BoardNo;
+		return boardNo;
 	}
 
 
 	public void setBoardNo(int boardNo) {
-		BoardNo = boardNo;
+		this.boardNo = boardNo;
 	}
 
 
@@ -139,7 +139,7 @@ public class Board {
 
 	@Override
 	public String toString() {
-		return "Board [BoardNo=" + BoardNo + ", boardTitle=" + boardTitle + ", boardContent=" + boardContent
+		return "Board [boardNo=" + boardNo + ", boardTitle=" + boardTitle + ", boardContent=" + boardContent
 				+ ", readCount=" + readCount + ", boardCreateDate=" + boardCreateDate + ", boardModifyDate="
 				+ boardModifyDate + ", boardWriter=" + boardWriter + ", boardCategory=" + boardCategory + ", boardType="
 				+ boardType + ", boardName=" + boardName + "]";

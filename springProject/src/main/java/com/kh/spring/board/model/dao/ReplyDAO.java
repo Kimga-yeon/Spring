@@ -10,7 +10,7 @@ import com.kh.spring.board.model.vo.Reply;
 
 @Repository
 public class ReplyDAO {
-	
+
 	@Autowired
 	private SqlSessionTemplate sqlSession;
 

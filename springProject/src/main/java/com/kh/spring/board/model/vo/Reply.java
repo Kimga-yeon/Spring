@@ -96,6 +96,6 @@ public class Reply {
 				+ ", replyCreateDate=" + replyCreateDate + ", replyModifyDate=" + replyModifyDate + ", replyStatus="
 				+ replyStatus + "]";
 	}
-    
-	
+
+
 }

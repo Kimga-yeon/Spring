@@ -18,20 +18,20 @@ import com.kh.spring.board.model.vo.Reply;
 @Controller
 @RequestMapping("/reply/*")
 public class ReplyController {
-	
+
 	@Autowired
 	private ReplyService replyService;
-	
+
 	@ResponseBody
 	@PostMapping("selectList/{boardNo}")
 	public String selectList(@PathVariable int boardNo) {
 		List<Reply> rList = replyService.selectList(boardNo);
-		
+
 		Gson gson = new GsonBuilder().setDateFormat("yy-MM-dd hh:mm:ss").create();
-		
+
 		return gson.toJson(rList);
 	}
-	
+
 	@ResponseBody
 	@RequestMapping(value = "insertReply/{boardNo}", produces = "application/text; charset=utf-8;")
 	// produces : 응답 데이터에 Mime type, 문자 인코딩 지정 속성
@@ -40,14 +40,14 @@ public class ReplyController {
 		// reply 커맨드 객체를 이용하여 전달받은 이름, 댓글, 내용을 한 객체에 저장
 		// + boardNo도 reply 객체의 parentBoardNo에 저장
 		reply.setParentBoardNo(boardNo);
-		
+
 		int result = replyService.insertReply(reply);
-		
+
 		String str = "댓글 삽입";
-		
+
 		if (result > 0)	str += "성공";
 		else			str += "실패";
-		
+
 		return str;
 	}
 	@ResponseBody
@@ -58,14 +58,14 @@ public class ReplyController {
 		// reply 커맨드 객체를 이용하여 전달받은 이름, 댓글, 내용을 한 객체에 저장
 		// + boardNo도 reply 객체의 parentBoardNo에 저장
 		reply.setParentBoardNo(boardNo);
-		
+
 		int result = replyService.insertReply2(reply);
-		
+
 		String str = "댓글 삽입";
-		
+
 		if (result > 0)	str += "성공";
 		else			str += "실패";
-		
+
 		return str;
 	}
 

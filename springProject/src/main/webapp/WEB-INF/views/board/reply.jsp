@@ -7,21 +7,17 @@
 	width: 90%;
 	margin-top : 100px;
 }
-
 #replyContentArea {
 	width: 90%;
 }
-
 #replyContentArea>textarea {
 	resize: none;
 	width: 100%;
 }
-
 #replyBtnArea {
 	width: 100px;
 	text-align: center;
 }
-
 .rWriter {
 	display : inline-block;
 	margin-right: 30px;
@@ -29,28 +25,23 @@
 	font-weight: bold;
 	font-size: 1.2em;
 }
-
 .rDate {
 	display : inline-block;
 	font-size: 0.5em;
 	color: gray;
 }
-
 #replyListArea {
 	list-style-type: none;
 }
-
 .rContent, .btnArea{
 	display: inline-block;
 	box-sizing: border-box;
 }
-
 .rContent {
 	height: 100%;
 	width : 100%;
 	word-break:normal;
 }
-
 .btnArea {
 	height: 100%;
 	width : 180px;
@@ -58,32 +49,25 @@
 	float: right;
     margin-bottom: 10px;
 }
-
 hr{
     clear: both;
 }
-
 .replyUpdateContent{
 	resize: none;
 	width: 70%;
 }
-
-
 /* 답글 */
 .reply2-li{
 	padding-left: 50px;  
 }
-
 .reply2Area{
 	padding-top : 30px;
 	width : 80%;
 }
-
 .reply2Content{
 	resize: none;  
 	width : 100%; 
 }
-
 </style>
 <div id="reply-area ">
 	<!-- 댓글 작성 부분 -->
@@ -110,9 +94,7 @@ hr{
 </div>
 
 <script>
-
-
-/// 댓글
+// 댓글
 // 페이지 로딩 완료 시 댓글 목록 호출
 $(function(){
 	selectReplyList();
@@ -310,6 +292,4 @@ function cancelReply2(){
 	}
 	
 }
-
-
 </script>

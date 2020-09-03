@@ -11,7 +11,7 @@ import com.kh.spring.board.model.vo.Reply;
 
 @Service
 public class ReplyServiceImpl implements ReplyService{
-	
+
 	@Autowired
 	private ReplyDAO replyDAO;
 
@@ -30,9 +30,9 @@ public class ReplyServiceImpl implements ReplyService{
         // 크로스 사이트 스크립트 방지 메소드
 		return replyDAO.insertReply(reply);
 	}
-	
-	
-	
+
+
+
     @Override
     @Transactional(rollbackFor = Exception.class)
 	public int insertReply2(Reply reply) {
@@ -55,8 +55,8 @@ public class ReplyServiceImpl implements ReplyService{
 
         return result;
     }
-	
-	
-	
+
+
+
 
 }

@@ -133,24 +133,20 @@
 			</div>
 
 			<hr>
-			
 			<!-- 댓글 영역 -->
 			<jsp:include page="reply.jsp"/>
-			
-			<!--  댓글 ajax조회 (연습) -->
-			<!-- <script>
+			<!-- 댓글 ajax조회(연습) -->
+<!-- 			<script type="text/javascript">
 				$.ajax({
 					url : "${contextPath}/reply/selectList/${board.boardNo}",
 					type : "POST",
 					dataType : "JSON",
 					success : function(rList){
-							console.log(rList);
-						},error : function(){
-							console.log("ajax 통신 실패")
-						}
-					
+						console.log(rList);
+					}, error : function(){
+						console.log("ajax 통신 실패");
+					}
 				});
-				
 			</script> -->
 
 		</div>

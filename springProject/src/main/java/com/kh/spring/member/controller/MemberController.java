@@ -352,16 +352,6 @@ public class MemberController {
 		 * 
 		 * */
 	
-		// DB 관련 예외가 발생할 경우 처리하는 메소드
-		@ExceptionHandler({SQLException.class, BadSqlGrammarException.class}) 
-		public String dbException(Exception e, Model model) {
-			e.printStackTrace();
-			
-			model.addAttribute("errorMsg", "데이터베이스 관련 예외 발생");
-			
-			return "common/errorPage";
-			
-		}
 		
 		// 비밀번호 변경 화면 이동 
 		@RequestMapping("changePwd")
@@ -445,7 +435,16 @@ public class MemberController {
 
 		}
 		
-		
+		// DB 관련 예외가 발생할 경우 처리하는 메소드
+		@ExceptionHandler({SQLException.class, BadSqlGrammarException.class}) 
+		public String dbException(Exception e, Model model) {
+			e.printStackTrace();
+			
+			model.addAttribute("errorMsg", "데이터베이스 관련 예외 발생");
+			
+			return "common/errorPage";
+			
+		}
 		
 		@ExceptionHandler(Exception.class) 
 		public String etcException(Exception e, Model model, HttpServletRequest request) {

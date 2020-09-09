@@ -36,6 +36,8 @@ public class BoardController {
 	@Autowired
 	private BoardService boardService;
 	
+	
+	
 	// @PathVariable:URL 경로에 있는 값을 파라미터로 사용할 수 있게 하는 어노테이션
 	@RequestMapping("list/{type}")
 	public String boardList(@PathVariable int type,

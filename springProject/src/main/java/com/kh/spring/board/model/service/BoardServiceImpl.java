@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,19 +72,30 @@ public class BoardServiceImpl implements BoardService{
 		// 게시글 등록 Service 구현
 		@Transactional(rollbackFor = Exception.class)
 		@Override
-		public int insertBoard(Board board, List<MultipartFile> images,String savePath) {
+		public int insertBoard(Board board, List<MultipartFile> images, String savePath) {
+			
 			int result = 0;
 			
 			// 1) 다음 SEQ_BNO를 얻어옴.
 			int boardNo = boardDAO.selectNextNo();
 			
-			if(boardNo > 0) { // 다음 번호를 정상적으로 얻어 왔을 때 
+			if(boardNo > 0) { // 다음 번호를 정상적으로 얻어 왔을 때
 				// 다음 번호 board 객체에 세팅
 				board.setBoardNo(boardNo);
 				
-				// 크로스 사이트 스크립트 방지 처리
-				board.setBoardContent(replaceParameter(board.getBoardContent()));
+				//-----------------------------------------Summernote-----------------------------------------
+				// Summernote는 작성되는 내용을 HTML 태그 형태로 전달되어지기 때문에
+				// 크로스사이트스크립트 방지 처리를 하는 경우 작성한 내용의 형태가 유지 될 수 없으므로 
+				// 자유게시판(게시판 타입 = 1) 일때만 크로스 사이트 스크립트를 처리하도 함.
+				if(board.getBoardType() == 1) { 
+					// 크로스 사이트 스크립트 방지 처리
+					board.setBoardContent(replaceParameter(board.getBoardContent()));// 크로스 사이트 스크립팅 방지
+				}
+				//---------------------------------------------------------------------------------------------
 				
+
+
+
 				// 2) 게시글 (board)DB 삽입
 				result = boardDAO.insertBoard(board);
 				
@@ -114,24 +127,49 @@ public class BoardServiceImpl implements BoardService{
 				
 				// 4) 파일을 서버에 저장
 				if(result > 0) {
-					for(int i=0; i<images.size(); i++) {
+					for(int i=0; i<images.size() ; i++) {
 						if(!images.get(i).getOriginalFilename().equals("")) {
-							// 이미지 업로드가 되었다면 
+							// 이미지 업로드가 되었다면
 							
-							// transferTo(경로) : 지정한 경로에 업로드된 바이트상태의 파일을 실제 파일로 변환해서 저장해라.
+							// transferTo(경로) : 지정한 경로에 업로드된 바이트상태의 파일을 실제 파일로 변환해서 저장해라. 
 							try {
 								images.get(i).transferTo(new File(savePath + "/" + files.get(i).getFileChangeName()));
 							} catch (Exception e) {
 								e.printStackTrace();
 								
-								// 서버에 파일 저장 중 문제가 발생할 경우 
-								// 이미 DB에 삽입되어 있는 파일 정보를 삭제하는 DAO를 호출 
-								
+								// 서버에 파일 저장 중 문제가 발생할 경우
+								// 이미 DB에 삽입되어 있는 파일정보를 삭제하는 DAO를 호출
 								boardDAO.deleteAttachment(boardNo);
-							} 
+							}          
 						}
 					}
 				}
+				
+				
+				//-----------------------------------------Summernote-----------------------------------------
+				if(board.getBoardType() == 2) {
+					Pattern pattern = Pattern.compile("<img[^>]*src=[\"']?([^>\"']+)[\"']?[^>]*>"); //img 태그 src 추출 정규표현식
+					
+					// SummerNote에 작성된 내용 중 img태그의 src속성의 값을 검사하여 매칭되는 값을 Matcher객체에 저장함.
+					Matcher matcher = pattern.matcher(board.getBoardContent());     
+					 
+					String changeFileName = null; // 파일명 변환 후 저장할 임시 참조 변수
+					String src = null; // src 속성값을 저장할 임시 참조 변수
+					// matcher.find() : Matcher 객체에 저장된 값(검사를 통해 매칭된 src 속성 값)에 반복 접근하여 값이 있을 경우 true 
+					
+					while(matcher.find()){
+						src=  matcher.group(1); // 매칭된 src 속성값을  Matcher 객체에서 꺼내서 src에 저장 
+						
+						filePath = src.substring(src.indexOf("/", 2), src.lastIndexOf("/")); // 파일명을 제외한 경로만 별도로 저장.
+						
+						changeFileName = src.substring(src.lastIndexOf("/")+ 1); // 업로드된 파일명만 잘라서 별도로 저장.
+						
+						// Attachment 객체를 이용하여 DB에 파일 정보를 저장
+						at = new Attachment(boardNo, changeFileName, changeFileName, filePath, 4); 
+						result = boardDAO.insertAttachment(at);
+					}
+				}
+				//---------------------------------------------------------------------------------------------
 			}
 			
 			return result;
@@ -339,6 +377,44 @@ public class BoardServiceImpl implements BoardService{
 		}
 		
 	
+
+		//-----------------------------------------Summernote-----------------------------------------
+		@Override
+		public Map<String, String> insertImage(MultipartFile uploadFile, String savePath) {
+			// 저장 폴더 선택
+			File folder = new File(savePath);
+			
+			// 만약 폴더가 없을 경우 자동 생성 시키기
+			if(!folder.exists())  folder.mkdir(); 
+			Map<String, String> result = new HashMap<String, String>();
+			
+			// rename 작업
+			String changeFileName = rename(uploadFile.getOriginalFilename());
+					
+			String filePath = "/resources/infoImages/";
+			result.put("filePath", filePath);
+			result.put("changeFileName", changeFileName);
+			
+			
+			// transferTo() : 지정한 경로에 업로드된 파일정보를 실제 파일로 변환하는 메소드 -> 정상 호출 시 파일이 저장됨.
+			try {
+				uploadFile.transferTo(new File(savePath + "/" + changeFileName));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return result;
+		}
+		
+		
+		
+		// DB에 저장된 파일 목록 조회 Service 구현
+		@Override
+		public List<String> selectDbFileList() {
+			return boardDAO.selectDbFileList();
+		}
+		
+		//--------------------------------------------------------------------------------------------
+		
 		
 
 		

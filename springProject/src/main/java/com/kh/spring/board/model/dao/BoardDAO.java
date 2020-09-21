@@ -209,4 +209,18 @@ public class BoardDAO {
 
 
 	
+	//-----------------------------------------Summernote-----------------------------------------
+	/**   DB에 저장된 파일 목록 조회 DAO
+	 * @return dbFileList
+	 */
+	public List<String> selectDbFileList() {
+		return sqlSession.selectList("boardMapper.selectDbFileList");
+	} 
+	//---------------------------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
 }

@@ -257,6 +257,15 @@
    		
    	</select>
    	
+   		<!-- DB에 저장된 파일 목록 조회  -->
+	<!-- * 검색 속도 향상을 위한 인덱스 생성
+	CREATE INDEX IDX_ATT_FILE_C_NAME ON ATTACHMENT (FILE_CHANGE_NAME);-->
+	<select id="selectDbFileList" resultType="string">
+		SELECT FILE_CHANGE_NAME FROM ATTACHMENT
+		WHERE TO_DATE(SUBSTR(FILE_CHANGE_NAME, 1, 8),'YYMMDDHH24') >= (SYSDATE - 3)
+	</select>
+	
+   	
    
    
 </mapper>

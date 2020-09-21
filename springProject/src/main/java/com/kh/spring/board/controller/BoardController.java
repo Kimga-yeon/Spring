@@ -1,6 +1,8 @@
 package com.kh.spring.board.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -127,10 +129,18 @@ public class BoardController {
 	}
 	
 	// 게시글 등록 화면 이동
-	@RequestMapping("{type}/insert")
-	public String insertView() {
-		return "board/boardInsert";
-	}
+//	@RequestMapping("{type}/insert")
+//	public String insertView() {
+//		return "board/boardInsert";
+//	}
+	
+	// 게시글 등록 화면 이동(섬머노트)
+		@RequestMapping("{type}/insert")
+		public String insertView(@PathVariable int type, Model model) {
+			model.addAttribute("boardType", type);
+			return "board/boardInsert";
+		}
+	
 	
 	// 게시글 등록
 	@RequestMapping(value="{type}/insertAction",method=RequestMethod.POST)
@@ -160,8 +170,17 @@ public class BoardController {
 		System.out.println(board);
 		
 		
-		// 썸네일 이미지 정보를 images 리스트 제일 앞에 추가 
-		images.add(0, thumbnail);
+		//-----------------------------------------Summernote-----------------------------------------
+				// name속성 값이 "images"인 파라미터 자체가 전달되지 않아 images 리스트가 생성되지 않아
+						// images.add(0, thumbnail); 코드 진행 시 NullPointerException이 발생함.
+				if(images.isEmpty()) { 
+					images = new ArrayList<>();
+				}
+				//--------------------------------------------------------------------------------------------
+				
+				
+				// 썸네일 이미지 정보를 images 리스트 제일 앞에 추가
+				images.add(0, thumbnail);
 		
 		/// 파일을 저장할 서버 컴퓨터의 로컬 경로
 		String savePath = request.getSession().getServletContext().getRealPath("resources/uploadImages");
@@ -350,6 +369,20 @@ public class BoardController {
 			
 			return "board/boardList";
 		}
+		
+		//-----------------------------------------Summernote-----------------------------------------
+		// Summernote 이미지 업로드
+		@ResponseBody
+		@RequestMapping("{type}/insertImage")
+		public String insertImage(@PathVariable int type,  HttpServletRequest request,
+				@RequestParam(value="uploadFile", required=false) MultipartFile uploadFile) {
+			
+			String savePath =  request.getSession().getServletContext().getRealPath("resources/infoImages/");
+			
+			Map<String, String> result = boardService.insertImage(uploadFile, savePath);
+			return new Gson().toJson(result);
+		}
+		//--------------------------------------------------------------------------------------------
 		
 		
 	

@@ -64,10 +64,10 @@
 							<div class="col-md-3">
 								<select class="custom-select" id="phone1" name="phone1">
 									<option <c:if test="${phone[0] == '010'} ">selected</c:if>> 010</option>
-									<option <c:if test="${phone[0] == '011'} ">selected</c:if>>>011</option>
-									<option <c:if test="${phone[0] == '016'} ">selected</c:if>>>016</option>
-									<option <c:if test="${phone[0] == '017'} ">selected</c:if>>>017</option>
-									<option <c:if test="${phone[0] == '019'} ">selected</c:if>>>019</option>
+									<option <c:if test="${phone[0] == '011'} ">selected</c:if>>011</option>
+									<option <c:if test="${phone[0] == '016'} ">selected</c:if>>016</option>
+									<option <c:if test="${phone[0] == '017'} ">selected</c:if>>017</option>
+									<option <c:if test="${phone[0] == '019'} ">selected</c:if>>019</option>
 								</select>
 							</div>
 							

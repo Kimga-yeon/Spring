@@ -90,6 +90,7 @@
                </c:choose>
                
                <li class="nav-item"><a class="nav-link" href="${contextPath}/board/list/1">Free Board</a></li>
+               <li class="nav-item"><a class="nav-link" href="${contextPath}/board/list/2">Information Board</a></li>
             </ul>
         </div>
     </nav>

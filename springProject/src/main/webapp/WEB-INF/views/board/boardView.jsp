@@ -74,7 +74,7 @@
 
 				
 				<!-- 이미지 부분 -->
-				<c:if test="${!empty files }">
+				<c:if test="${board.boardType == 1 }">
 
                     <div class="carousel slide m-3" id="carousel-325626">
 

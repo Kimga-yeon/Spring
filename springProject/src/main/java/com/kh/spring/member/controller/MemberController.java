@@ -163,7 +163,7 @@ public class MemberController {
 			// Controller 클래스명 위에
 			// @SessionAttributes() 어노테이션을 작성해야 함.
 			
-		     // System.out.println(member.getMemberId() + " / " + member.getMemberPwd());
+		      System.out.println(member.getMemberId() + " / " + member.getMemberPwd());
 		    	  
 		    	  Member loginMember = memberService.login(member);
 		    	  
